@@ -1,12 +1,11 @@
 from dataclasses import dataclass
 from typing import Optional
 
-
 @dataclass
-class FinetuneConfig:
+class CPQFinetuneConfig:
     # Path to the pre-trained model checkpoint
     path: str = (
-        "log/OfflineCarCircle-v0/COptiDICE-OfflineCarCircle-v0-cost-10-seed-0/checkpoint/model-best.pt"
+        "log/OfflineCarCircle-v0/CPQ-OfflineCarCircle-v0-cost-10-seed-0/checkpoint/model-best.pt"
     )
 
     # Online training parameters
@@ -20,8 +19,9 @@ class FinetuneConfig:
 
     # Learning rates for fine-tuning (can be smaller than pre-training)
     actor_lr: float = 1e-5
-    critic_lr: float = 1e-5
-    scalar_lr: float = 1e-5
+    critic_lr: float = 1e-4
+    alpha_lr: float = 1e-5
+    vae_lr: float = 1e-4
 
     # General parameters
     pretrain_seed: int = 0
@@ -40,7 +40,7 @@ class FinetuneConfig:
     project: str = "OSRL-Finetune"
     group: str = None
     name: Optional[str] = None
-    prefix: Optional[str] = "COptiDICE-Finetune"
+    prefix: Optional[str] = "CPQ-Finetune"
     suffix: Optional[str] = ""
     logdir: Optional[str] = "logs-finetune"
     verbose: bool = True

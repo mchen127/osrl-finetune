@@ -1,18 +1,18 @@
 #!/bin/bash
 
 # ======================================================================================
-# finetune_bcql.sh
+# finetune_cpq.sh
 #
 # Description:
-#   This script launches parallel fine-tuning jobs for the BCQL algorithm.
+#   This script launches parallel fine-tuning jobs for the cpq algorithm.
 #   It finds pretrained models based on a task name and a list of seeds,
-#   and then runs train_bcql.py for a new range of seeds.
+#   and then runs train_cpq.py for a new range of seeds.
 #
 # Usage:
-#   ./finetune_bcql.sh --task <task_name> [options]
+#   ./finetune_cpq.sh --task <task_name> [options]
 #
 # Example:
-#   ./finetune_bcql.sh \
+#   ./finetune_cpq.sh \
 #       --task OfflineCarCircle-v0-cost-40 \
 #       --pretrained_seeds "1 5 10" \
 #       --new_seeds "21 22 23" \
@@ -51,7 +51,7 @@ done
 # --- Validate Required Arguments ---
 if [ -z "$TASK" ]; then
     echo "Error: --task is a required argument."
-    echo "Usage: ./launch_finetune_bcql.sh --task <task_name> [--pretrained_seeds \"1 5 10\"] [--new_seeds \"21 22 23\"] [--max_jobs 4]"
+    echo "Usage: ./finetune_cpq.sh --task <task_name> [--pretrained_seeds \"1 5 10\"] [--new_seeds \"21 22 23\"] [--max_jobs 4]"
     exit 1
 fi
 
@@ -83,7 +83,7 @@ for pretrained_seed in $PRETRAINED_SEEDS; do
     
     # Construct the search pattern for the pretrained model directories.
     # The wildcard '*' handles the random string at the end of the folder name.
-    search_pattern="${BASE_LOG_DIR}/${TASK}/BCQL_cost${COST_LIMIT}_seed${pretrained_seed}*/BCQL_cost${COST_LIMIT}_seed${pretrained_seed}*"
+    search_pattern="${BASE_LOG_DIR}/${TASK}/CPQ_cost${COST_LIMIT}_seed${pretrained_seed}*/CPQ_cost${COST_LIMIT}_seed${pretrained_seed}*"
     
     # Find all directories that match the pattern.
     # 'shopt -s nullglob' ensures that if no matches are found, the array will be empty.
@@ -129,7 +129,7 @@ for pretrained_seed in $PRETRAINED_SEEDS; do
             # Launch the Python training script in the background using '&'.
             # All output from this command will be piped to a log file for organization.
             (
-              python -m train.train_bcql \
+              python -m train.train_cpq \
                 --device "cuda" \
                 --pretrain_seed "$pretrained_seed" \
                 --finetune_seed "$new_seed" \

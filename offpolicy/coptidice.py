@@ -36,7 +36,13 @@ class COptiDICEFinetunePolicy(BasePolicy):
             obs_tensor = obs_tensor.squeeze(1)
 
         with torch.no_grad():
-            action_tensor, _ = self.model.actor.forward(obs_tensor, deterministic=True)
+            # The trainer calls policy.train() or policy.eval() to set self.training.
+            # We use this flag to decide whether to use deterministic actions.
+            # self.training = True for exploration (stochastic), False for evaluation (deterministic).
+            is_deterministic = not self.training
+            action_tensor, _ = self.model.actor.forward(
+                obs_tensor, deterministic=is_deterministic
+            )
 
         action = action_tensor.cpu().numpy()
         return Batch(act=action)
@@ -103,7 +109,7 @@ class COptiDICEFinetunePolicy(BasePolicy):
         )
 
         stats_loss = self.model.update(mixed_batch_tuple)
-        
+        self.logger.store(**stats_loss)
 
         return stats_loss
 

@@ -21,11 +21,15 @@ from fsrl.trainer import OffpolicyTrainer
 from fsrl.utils import WandbLogger
 from osrl.algorithms import BCQL
 from osrl.common.exp_util import (
-    auto_name, seed_all, load_config_and_model, DEFAULT_SKIP_KEY, DEFAULT_KEY_ABBRE
+    auto_name,
+    seed_all,
+    load_config_and_model,
+    DEFAULT_SKIP_KEY,
+    DEFAULT_KEY_ABBRE,
 )
 from osrl.common import TransitionDataset
 from offpolicy.bcql import BCQLFinetunePolicy
-from config.bcql_config import BCQLFinetuneConfig
+from config.bcql_configs import BCQLFinetuneConfig
 
 
 @pyrallis.wrap()
@@ -50,7 +54,7 @@ def finetune(args: BCQLFinetuneConfig):
                 "pretrain_seed": "pretrainseed",
                 "finetune_seed": "finetuneseed",
                 "trajectory_cost": "trajcost",
-            }
+            },
         )
     if args.logdir is not None:
         args.logdir = os.path.join(args.logdir, args.project, args.group, args.name)

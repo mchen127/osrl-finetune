@@ -20,12 +20,19 @@ from fsrl.trainer import OffpolicyTrainer
 from fsrl.utils import WandbLogger
 from fsrl.utils.exp_util import auto_name, load_config_and_model, seed_all
 from osrl.algorithms import COptiDICE
-from osrl.common.exp_util import auto_name, seed_all
+from osrl.common.exp_util import (
+    auto_name,
+    seed_all,
+    DEFAULT_KEY_ABBRE,
+    DEFAULT_SKIP_KEY,
+)
 from osrl.common import TransitionDataset
+from offpolicy.coptidice import COptiDICEFinetunePolicy
+from config.coptidice_configs import COptiDICEFinetuneConfig
 
 
 @pyrallis.wrap()
-def finetune(args: FinetuneConfig):
+def finetune(args: COptiDICEFinetuneConfig):
     # 1. Load pre-trained model and its original configuration
     original_cfg, model_state = load_config_and_model(args.path)
 
@@ -34,7 +41,17 @@ def finetune(args: FinetuneConfig):
         args.group = original_cfg["task"] + "-cost-" + str(int(args.cost_limit))
     if args.name is None:
         args.name = auto_name(
-            asdict(args), asdict(FinetuneConfig()), args.prefix, args.suffix
+            asdict(COptiDICEFinetuneConfig()),
+            asdict(args),
+            args.prefix,
+            args.suffix,
+            skip_keys=(DEFAULT_SKIP_KEY + ["pretrained_model_path"]),
+            key_abbre={
+                **DEFAULT_KEY_ABBRE,
+                "pretrain_seed": "pretrainseed",
+                "finetune_seed": "finetuneseed",
+                "trajectory_cost": "trajcost",
+            },
         )
     if args.logdir is not None:
         args.logdir = os.path.join(args.logdir, args.project, args.group, args.name)
@@ -124,6 +141,7 @@ def finetune(args: FinetuneConfig):
         offline_dataloader_iter=offline_loader_iter,
         offline_batch_ratio=args.offline_batch_ratio,
         device=args.device,
+        logger=logger,
         observation_space=env.observation_space,
         action_space=env.action_space,
     )
