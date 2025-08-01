@@ -3,10 +3,10 @@ from typing import Optional
 
 
 @dataclass
-class BCQLFinetuneConfig:
+class FinetuneConfig:
     # Path to the pre-trained model checkpoint
-    pretrained_model_path: str = (
-        "logs-osrl/OfflineHalfCheetahVelocityGymnasium-v1-cost-20/BCQL_cost20_seed10-0df4/BCQL_cost20_seed10-0df4"
+    path: str = (
+        "log/OfflineCarCircle-v0/COptiDICE-OfflineCarCircle-v0-cost-10-seed-0/checkpoint/model-best.pt"
     )
 
     # Online training parameters
@@ -19,9 +19,9 @@ class BCQLFinetuneConfig:
     episode_per_collect: int = 5
 
     # Learning rates for fine-tuning (can be smaller than pre-training)
-    actor_lr: float = 1e-4
-    critic_lr: float = 3e-4
-    vae_lr: float = 1e-4
+    actor_lr: float = 1e-5
+    critic_lr: float = 1e-5
+    scalar_lr: float = 1e-5
 
     # General parameters
     pretrain_seed: int = 0
@@ -30,8 +30,7 @@ class BCQLFinetuneConfig:
     threads: int = 8
 
     # Environment parameters
-    cost_limit: int = 0
-    trajectory_cost: str = "all"
+    cost_limit: float = 0
 
     # Evaluation parameters
     eval_episodes: int = 10
@@ -41,7 +40,7 @@ class BCQLFinetuneConfig:
     project: str = "OSRL-Finetune"
     group: str = None
     name: Optional[str] = None
-    prefix: Optional[str] = "BCQL-Finetune"
+    prefix: Optional[str] = "COptiDICE-Finetune"
     suffix: Optional[str] = ""
     logdir: Optional[str] = "logs-finetune"
     verbose: bool = True
